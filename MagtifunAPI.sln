@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagtifunAPI", "MagtifunAPI\MagtifunAPI.csproj", "{37065604-AB08-47C9-AD23-18BDE5116252}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagtifunUnitTests", "APITest\MagtifunUnitTests.csproj", "{C910D89F-7D98-4831-BBC5-8206D51A4666}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagtifunUnitTests", "MagtifunUnitTests\MagtifunUnitTests.csproj", "{C910D89F-7D98-4831-BBC5-8206D51A4666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
