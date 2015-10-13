@@ -2,7 +2,7 @@
 C# Portable class library for Magtifun SMS service
 
 How to install from Nuget:
-PM> Install-Package MagtifunApi.dll 
+PM> Install-Package MagtifunAPI 
 
 How to use:
 var sender = new MagtifunHelper("Account Number", "Account password");
