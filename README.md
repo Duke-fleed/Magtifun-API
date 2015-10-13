@@ -5,19 +5,19 @@ How to install from Nuget:
 PM> Install-Package MagtifunAPI 
 
 ##How to use:
-###Constructor:
+####Constructor:
 var helper = new MagtifunHelper("Account Number", "Account password");
 
-###Sending message:
+####Sending message:
 sender.SendSMS("Recipient", "Text to send");
 
-###Getting remaining messages:
+####Getting remaining messages:
 sender.GetRemainingMessages();
 
-##Getting contacts list:
+####Getting contacts list:
 helper.GetContactsList();
 
-###Adding new contact:
+####Adding new contact:
 helper.AddNewContact(firstname, mobilenumber, [*other optional parameters*])
 
 All features documented in Test project.
