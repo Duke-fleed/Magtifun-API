@@ -9,7 +9,7 @@ namespace MagtifunAPI
 {
     public class MagtifunHelper
     {
-        private string cookie;
+        private readonly string cookie;
         private const string LOGIN_URL = "http://www.magtifun.ge/index.php?page=11&lang=ge";
         private const string SEND_URL = "http://www.magtifun.ge/scripts/sms_send.php";
         private const string CONTACTS_URL= "http://www.magtifun.ge/index.php?page=5&lang=ge";
@@ -27,16 +27,17 @@ namespace MagtifunAPI
         {
             MobileNumber = mobileNumber;
             MagtiFunPassword = password;
+            cookie = LogIn();
         }
 
         /// <summary>
         /// MagtiFun account mobile number
         /// </summary> 
-        public string MobileNumber { get; set; }
+        public string MobileNumber { get; }
         /// <summary>
         /// Magtifun account password
         /// </summary>
-        public string MagtiFunPassword { get; set; }
+        public string MagtiFunPassword { get; }
         /// <summary>
         /// Sends SMS and returns response code
         /// </summary> 
@@ -44,7 +45,6 @@ namespace MagtifunAPI
         /// <param name="messageText">Text to be sent</param>
         public string SendSMS(string recipient, string messageText)
         {
-            var cookieHeader = LogIn();
 
             using (var handler = new HttpClientHandler { UseCookies = false })
             using (var client = new HttpClient(handler))
@@ -57,7 +57,7 @@ namespace MagtifunAPI
                         new KeyValuePair<string, string>(RECIPIENTS_PARAM, recipient)
                     })
                 };
-                message.Headers.Add("Cookie", cookieHeader);
+                message.Headers.Add("Cookie", cookie);
                 var result = client.SendAsync(message).Result;
                 var responseCode = result.Content.ReadAsStringAsync().Result;
                 return responseCode;
@@ -71,14 +71,13 @@ namespace MagtifunAPI
         /// </returns>
         public int GetRemainingMessages()
         {
-            var cookieHeader = LogIn();
             string text;
 
             using (var handler = new HttpClientHandler { UseCookies = false })
             using (var client = new HttpClient(handler))
             {
                 var message = new HttpRequestMessage(HttpMethod.Post, LOGIN_URL);
-                message.Headers.Add("Cookie", cookieHeader);
+                message.Headers.Add("Cookie", cookie);
                 var result = client.SendAsync(message);
                 text = result.Result.Content.ReadAsStringAsync().Result;
             }
@@ -102,7 +101,6 @@ namespace MagtifunAPI
         public List<MagtifunContact> GetContactsList()
         {
             var contactList = new List<MagtifunContact>();
-            var cookieHeader = LogIn();
             
             string text;
 
@@ -110,7 +108,7 @@ namespace MagtifunAPI
             using (var client = new HttpClient(handler))
             {
                 var message = new HttpRequestMessage(HttpMethod.Get, CONTACTS_URL);
-                message.Headers.Add("Cookie", cookieHeader);
+                message.Headers.Add("Cookie", cookie);
                 var result = client.SendAsync(message);
                 text = result.Result.Content.ReadAsStringAsync().Result;
             }
@@ -159,7 +157,6 @@ namespace MagtifunAPI
         /// </returns>        
         public string AddNewContact(string firstName, string mobileNumber, string nickName="", string lastName="",  DateTime? dateOfBirth=null, bool birthDayRemind=false, Gender gender=Gender.Male)
         {
-            var cookieHeader = LogIn();
 
             using (var handler = new HttpClientHandler { UseCookies = false })
             using (var client = new HttpClient(handler))
@@ -179,7 +176,7 @@ namespace MagtifunAPI
                         new KeyValuePair<string, string>("mobile_number", mobileNumber)
                     })
                 };
-                message.Headers.Add("Cookie", cookieHeader);
+                message.Headers.Add("Cookie", cookie);
                 var result = client.SendAsync(message).Result;
                 var responseCode = result.Content.ReadAsStringAsync().Result;
                 return responseCode;
@@ -188,11 +185,6 @@ namespace MagtifunAPI
 
         private string LogIn()
         {
-            if (!string.IsNullOrWhiteSpace(cookie))
-            {
-                return cookie;
-            }
-
             using (var client = new HttpClient())
             {
                 var content = new FormUrlEncodedContent(new[]
@@ -202,8 +194,8 @@ namespace MagtifunAPI
                 });
 
                 var result = client.PostAsync(LOGIN_URL, content).Result;
-                cookie = result.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value?.FirstOrDefault();
-                return cookie;
+                var cookieResult = result.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value?.FirstOrDefault();
+                return cookieResult;
             }
         }
     }
